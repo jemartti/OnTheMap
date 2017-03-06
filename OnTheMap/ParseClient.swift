@@ -17,13 +17,8 @@ class ParseClient : NSObject {
     // shared session
     var session = URLSession.shared
     
-    // configuration object
-    var config = ParseConfig()
-    
     // authentication state
-    var requestToken: String? = nil
-    var sessionID: String? = nil
-    var userID: Int? = nil
+    var studentInformations : [StudentInformation] = []
     
     // MARK: Initializers
     
@@ -35,14 +30,10 @@ class ParseClient : NSObject {
     
     func taskForGETMethod(_ method: String, parameters: [String:AnyObject], completionHandlerForGET: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
         
-        /* 1. Set the parameters */
-        var parametersWithApiKey = parameters
-        parametersWithApiKey[ParameterKeys.ApiKey] = Constants.ApiKey as AnyObject?
+        /* Configure the request */
+        let request = parseRequestFromParameters(parameters, method: method)
         
-        /* 2/3. Build the URL, Configure the request */
-        let request = NSMutableURLRequest(url: parseURLFromParameters(parametersWithApiKey, withPathExtension: method))
-        
-        /* 4. Make the request */
+        /* Make the request */
         let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
             
             func sendError(_ error: String) {
@@ -53,74 +44,36 @@ class ParseClient : NSObject {
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error)")
+                print(error!)
+                sendError("The request failed (likely due to a network issue). Check your settings and try again.")
                 return
             }
             
             /* GUARD: Did we get a successful 2XX response? */
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                sendError("Your request returned a status code other than 2xx!")
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode else {
+                sendError("The request failed due to a server error. Try again later.")
+                return
+            }
+            if statusCode < 200 || statusCode > 299 {
+                if statusCode == 403 {
+                    sendError("Invalid credentials.")
+                } else {
+                    sendError("The request failed due to a server error (\(statusCode)). Try again later.")
+                }
                 return
             }
             
             /* GUARD: Was there any data returned? */
             guard let data = data else {
-                sendError("No data was returned by the request!")
+                sendError("The request failed due to a server error. Try again later.")
                 return
             }
             
-            /* 5/6. Parse the data and use the data (happens in completion handler) */
+            /* Parse the data and use the data (happens in completion handler) */
             ClientHelpers.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForGET)
         }
         
-        /* 7. Start the request */
-        task.resume()
-        
-        return task
-    }
-    
-    func taskForGETImage(_ size: String, filePath: String, completionHandlerForImage: @escaping (_ imageData: Data?, _ error: NSError?) -> Void) -> URLSessionTask {
-        
-        /* 1. Set the parameters */
-        // There are none...
-        
-        /* 2/3. Build the URL and configure the request */
-        let baseURL = URL(string: config.baseImageURLString)!
-        let url = baseURL.appendingPathComponent(size).appendingPathComponent(filePath)
-        let request = URLRequest(url: url)
-        
-        /* 4. Make the request */
-        let task = session.dataTask(with: request) { (data, response, error) in
-            
-            func sendError(_ error: String) {
-                print(error)
-                let userInfo = [NSLocalizedDescriptionKey : error]
-                completionHandlerForImage(nil, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
-            }
-            
-            /* GUARD: Was there an error? */
-            guard (error == nil) else {
-                sendError("There was an error with your request: \(error)")
-                return
-            }
-            
-            /* GUARD: Did we get a successful 2XX response? */
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                sendError("Your request returned a status code other than 2xx!")
-                return
-            }
-            
-            /* GUARD: Was there any data returned? */
-            guard let data = data else {
-                sendError("No data was returned by the request!")
-                return
-            }
-            
-            /* 5/6. Parse the data and use the data (happens in completion handler) */
-            completionHandlerForImage(data, nil)
-        }
-        
-        /* 7. Start the request */
+        /* Start the request */
         task.resume()
         
         return task
@@ -130,55 +83,130 @@ class ParseClient : NSObject {
     
     func taskForPOSTMethod(_ method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPOST: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
         
-        /* 1. Set the parameters */
-        var parametersWithApiKey = parameters
-        parametersWithApiKey[ParameterKeys.ApiKey] = Constants.ApiKey as AnyObject?
-        
-        /* 2/3. Build the URL, Configure the request */
-        let request = NSMutableURLRequest(url: parseURLFromParameters(parametersWithApiKey, withPathExtension: method))
+        /* Configure the request */
+        let request = parseRequestFromParameters(parameters, method: method)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonBody.data(using: String.Encoding.utf8)
         
-        /* 4. Make the request */
+        /* Make the request */
         let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
             
             func sendError(_ error: String) {
                 print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
-                completionHandlerForPOST(nil, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
+                completionHandlerForPOST(nil, NSError(domain: "taskForPOSTMethod", code: 1, userInfo: userInfo))
             }
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error)")
+                print(error!)
+                sendError("The request failed (likely due to a network issue). Check your settings and try again.")
                 return
             }
             
             /* GUARD: Did we get a successful 2XX response? */
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                sendError("Your request returned a status code other than 2xx!")
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode else {
+                sendError("The request failed due to a server error. Try again later.")
+                return
+            }
+            if statusCode < 200 || statusCode > 299 {
+                if statusCode == 403 {
+                    sendError("Invalid credentials.")
+                } else {
+                    sendError("The request failed due to a server error (\(statusCode)). Try again later.")
+                }
                 return
             }
             
             /* GUARD: Was there any data returned? */
             guard let data = data else {
-                sendError("No data was returned by the request!")
+                sendError("The request failed due to a server error. Try again later.")
                 return
             }
             
-            /* 5/6. Parse the data and use the data (happens in completion handler) */
-            ClientHelpers.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPOST)
+            /* Parse the data and use the data (happens in completion handler) */
+            let range = Range(uncheckedBounds: (5, data.count))
+            let newData = data.subdata(in: range)
+            ClientHelpers.convertDataWithCompletionHandler(newData, completionHandlerForConvertData: completionHandlerForPOST)
         }
         
-        /* 7. Start the request */
+        /* Start the request */
+        task.resume()
+        
+        return task
+    }
+    
+    // MARK: PUT
+    
+    func taskForPUTMethod(_ method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPUT: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
+        
+        /* Build the URL, Configure the request */
+        let request = parseRequestFromParameters(parameters, method: method)
+        request.httpMethod = "PUT"
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = jsonBody.data(using: String.Encoding.utf8)
+        
+        /* Make the request */
+        let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
+            
+            func sendError(_ error: String) {
+                print(error)
+                let userInfo = [NSLocalizedDescriptionKey : error]
+                completionHandlerForPUT(nil, NSError(domain: "taskForPUTMethod", code: 1, userInfo: userInfo))
+            }
+            
+            /* GUARD: Was there an error? */
+            guard (error == nil) else {
+                print(error!)
+                sendError("The request failed (likely due to a network issue). Check your settings and try again.")
+                return
+            }
+            
+            /* GUARD: Did we get a successful 2XX response? */
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode else {
+                sendError("The request failed due to a server error. Try again later.")
+                return
+            }
+            if statusCode < 200 || statusCode > 299 {
+                if statusCode == 403 {
+                    sendError("Invalid credentials.")
+                } else {
+                    sendError("The request failed due to a server error (\(statusCode)). Try again later.")
+                }
+                return
+            }
+            
+            /* GUARD: Was there any data returned? */
+            guard let data = data else {
+                sendError("The request failed due to a server error. Try again later.")
+                return
+            }
+            
+            /* Parse the data and use the data (happens in completion handler) */
+            let range = Range(uncheckedBounds: (5, data.count))
+            let newData = data.subdata(in: range)
+            ClientHelpers.convertDataWithCompletionHandler(newData, completionHandlerForConvertData: completionHandlerForPUT)
+        }
+        
+        /* Start the request */
         task.resume()
         
         return task
     }
     
     // MARK: Helpers
+    
+    private func parseRequestFromParameters(_ parameters: [String:AnyObject], method: String? = nil) -> NSMutableURLRequest {
+        
+        let request = NSMutableURLRequest(url: parseURLFromParameters(parameters, withPathExtension: method))
+        request.addValue(ParseClient.Constants.ApplicationId, forHTTPHeaderField: "X-Parse-Application-Id")
+        request.addValue(ParseClient.Constants.ApiKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+        
+        return request
+    }
     
     // create a URL from parameters
     private func parseURLFromParameters(_ parameters: [String:AnyObject], withPathExtension: String? = nil) -> URL {
@@ -200,9 +228,11 @@ class ParseClient : NSObject {
     // MARK: Shared Instance
     
     class func sharedInstance() -> ParseClient {
+        
         struct Singleton {
             static var sharedInstance = ParseClient()
         }
+        
         return Singleton.sharedInstance
     }
 }
