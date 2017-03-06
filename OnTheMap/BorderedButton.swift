@@ -2,8 +2,8 @@
 //  BorderedButton.swift
 //  OnTheMap
 //
-//  Created by Jacob Marttinen on 3/5/17.
-//  Copyright © 2017 Jacob Marttinen. All rights reserved.
+//  Created by Jarrod Parkes on 1/23/15.
+//  Copyright (c) 2015 Udacity. All rights reserved.
 //
 
 import UIKit

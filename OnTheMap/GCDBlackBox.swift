@@ -2,8 +2,8 @@
 //  GCDBlackBox.swift
 //  OnTheMap
 //
-//  Created by Jacob Marttinen on 3/5/17.
-//  Copyright © 2017 Jacob Marttinen. All rights reserved.
+//  Created by Jarrod Parkes on 11/5/15.
+//  Copyright © 2015 Udacity. All rights reserved.
 //
 
 import Foundation
