@@ -14,16 +14,11 @@ class ListViewController: UITableViewController {
     
     // MARK: Properties
     
-    var appDelegate: AppDelegate!
-    var studentInformations: [StudentInformation] = []
-    
     
     // MARK: Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        appDelegate = UIApplication.shared.delegate as! AppDelegate
         
         // Set up the Navigation bar
         navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -38,30 +33,16 @@ class ListViewController: UITableViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
         
-        ParseClient.sharedInstance().getStudentLocations(100, skip: 0, order: "") { (studentInformations, error) in
+        // Load the studentInformations
+        ParseClient.sharedInstance().getStudentLocations2(100, skip: 0, order: "-updatedAt") { (error) in
             if let error = error {
                 self.alertUserOfFailure(message: error.localizedDescription)
             } else {
-                if let error = error {
-                    self.alertUserOfFailure(message: error.localizedDescription)
-                } else {
-                    performUIUpdatesOnMain {
-                        self.studentInformations = studentInformations!
-                        self.tableView.reloadData()
-                    }
+                performUIUpdatesOnMain {
+                    self.tableView.reloadData()
                 }
             }
         }
-        
-        // Load the memes data from the global context
-//        ParseClient.sharedInstance().getStudentLocations(100, skip: 0, order: "-updatedAt") { (error) in
-//            if let error = error {
-//                self.alertUserOfFailure(message: error.localizedDescription)
-//            } else {
-//                self.getUserData()
-//            }
-//        }
-        tableView.reloadData()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -87,7 +68,7 @@ class ListViewController: UITableViewController {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
         ) -> Int {
-        return studentInformations.count
+        return ParseClient.sharedInstance().studentInformations.count
     }
     
     override func tableView(
@@ -97,7 +78,7 @@ class ListViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: "StudentInformationTableViewCell"
             )!
-        let studentInformation = studentInformations[(indexPath as NSIndexPath).row]
+        let studentInformation = ParseClient.sharedInstance().studentInformations[(indexPath as NSIndexPath).row]
         
         // Set the name and image
         if let firstName = studentInformation.firstName, let lastName = studentInformation.lastName {
