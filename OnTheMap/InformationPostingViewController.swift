@@ -62,6 +62,8 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
     
     @IBAction func find(_ sender: Any) {
         
+        userTappedView(self)
+        
         if answerTextField.text == "" {
             self.alertUserOfFailure(message: "Location string is required.", exit: false)
             return	
@@ -104,6 +106,9 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
     }
     
     @IBAction func submit(_ sender: Any) {
+        
+        userTappedView(self)
+        
         ParseClient.sharedInstance().postStudentLocation(mapString!, mediaURL: answerTextField.text!, coordinates: location!) { (error) in
             if error != nil {
                 self.alertUserOfFailure(message: "Post failed. Try again.", exit: true)
@@ -139,12 +144,14 @@ extension InformationPostingViewController: UITextFieldDelegate {
     func keyboardWillShow(_ notification: Notification) {
         if !keyboardOnScreen {
             view.frame.origin.y -= keyboardHeight(notification)
+            mapView.isHidden = true
         }
     }
     
     func keyboardWillHide(_ notification: Notification) {
         if keyboardOnScreen {
             view.frame.origin.y += keyboardHeight(notification)
+            mapView.isHidden = false
         }
     }
     
