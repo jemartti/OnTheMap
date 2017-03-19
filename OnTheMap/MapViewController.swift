@@ -154,10 +154,10 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     // Displays the Create View
     func create() {
-        //        let memeCreateVC = storyboard!.instantiateViewController(
-        //            withIdentifier: "MemeCreateViewController"
-        //        )
-        //        present(memeCreateVC, animated: true, completion: nil)
+        let informationPostingVC = storyboard!.instantiateViewController(
+            withIdentifier: "InformationPostingViewController"
+        )
+        present(informationPostingVC, animated: true, completion: nil)
     }
     
     func logout() {

@@ -168,10 +168,10 @@
             </objects>
             <point key="canvasLocation" x="1265" y="-141"/>
         </scene>
-        <!--View Controller-->
+        <!--Information Posting-->
         <scene sceneID="Xer-34-2SN">
             <objects>
-                <viewController id="O6a-yB-F3d" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="InformationPostingViewController" id="O6a-yB-F3d" userLabel="Information Posting" customClass="InformationPostingViewController" customModule="OnTheMap" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="bqp-Li-OPF"/>
                         <viewControllerLayoutGuide type="bottom" id="9mu-RU-If8"/>
@@ -179,12 +179,88 @@
                     <view key="view" contentMode="scaleToFill" id="Kbi-qs-4vs">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="PPV-Al-nRm">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <subviews>
+                                    <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mOF-5X-M9a">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="phd-vr-G9S"/>
+                                        </constraints>
+                                        <items>
+                                            <navigationItem id="QOA-gP-LgC">
+                                                <barButtonItem key="rightBarButtonItem" title="Cancel" id="Xgf-qJ-PdU">
+                                                    <connections>
+                                                        <action selector="cancel:" destination="O6a-yB-F3d" id="40f-S7-5DA"/>
+                                                    </connections>
+                                                </barButtonItem>
+                                            </navigationItem>
+                                        </items>
+                                    </navigationBar>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Where are you studying today?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VmK-de-pE7">
+                                        <rect key="frame" x="0.0" y="40" width="375" height="80"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="80" id="jfc-y9-lv9"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Canada" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dd5-hN-xfu">
+                                        <rect key="frame" x="0.0" y="120" width="375" height="80"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="80" id="Sdx-D9-IZE"/>
+                                        </constraints>
+                                        <nil key="textColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                    <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="w7l-ZT-ZwY">
+                                        <rect key="frame" x="0.0" y="200" width="375" height="407"/>
+                                    </mapView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EWi-fB-MN4">
+                                        <rect key="frame" x="0.0" y="607" width="375" height="40"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h77-I9-we8" customClass="BorderedButton" customModule="OnTheMap" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="187.5" height="40"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <state key="normal" title="Find on the Map"/>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TBA-CM-uDc" customClass="BorderedButton" customModule="OnTheMap" customModuleProvider="target">
+                                                <rect key="frame" x="187.5" y="0.0" width="187.5" height="40"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <state key="normal" title="Submit"/>
+                                            </button>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="WRb-wX-uru"/>
+                                            <constraint firstItem="TBA-CM-uDc" firstAttribute="width" secondItem="h77-I9-we8" secondAttribute="width" id="w7O-Qb-e5f"/>
+                                        </constraints>
+                                    </stackView>
+                                </subviews>
+                            </stackView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="9mu-RU-If8" firstAttribute="top" secondItem="PPV-Al-nRm" secondAttribute="bottom" id="JRv-PZ-iWW"/>
+                            <constraint firstAttribute="trailing" secondItem="PPV-Al-nRm" secondAttribute="trailing" id="c3A-2f-GL6"/>
+                            <constraint firstItem="PPV-Al-nRm" firstAttribute="leading" secondItem="Kbi-qs-4vs" secondAttribute="leading" id="sFS-EU-amV"/>
+                            <constraint firstItem="PPV-Al-nRm" firstAttribute="top" secondItem="bqp-Li-OPF" secondAttribute="bottom" id="u5u-4G-AT7"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="answerTextField" destination="dd5-hN-xfu" id="Tnf-Xm-THP"/>
+                        <outlet property="cancelButton" destination="QOA-gP-LgC" id="1kq-5I-cou"/>
+                        <outlet property="findButton" destination="h77-I9-we8" id="Crb-59-Ew8"/>
+                        <outlet property="mapView" destination="w7l-ZT-ZwY" id="l8n-gt-YkR"/>
+                        <outlet property="questionLabel" destination="VmK-de-pE7" id="ch0-2o-PeH"/>
+                        <outlet property="submitButton" destination="TBA-CM-uDc" id="0T2-6s-IwJ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E6U-Et-0EM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2313" y="-639"/>
+            <point key="canvasLocation" x="2312.8000000000002" y="-639.13043478260875"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="TMg-0Q-F5l">
