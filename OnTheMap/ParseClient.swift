@@ -17,12 +17,13 @@ class ParseClient : NSObject {
     // shared session
     var session = URLSession.shared
     
-    // API state
+    // UI State
     var studentInformations : [StudentInformation] = []
     
     // MARK: Initializers
     
     override init() {
+        
         super.init()
         
         session = {
@@ -44,14 +45,12 @@ class ParseClient : NSObject {
         let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
             
             func sendError(_ error: String) {
-                print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
                 completionHandlerForGET(nil, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
             }
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                print(error!)
                 sendError("The request failed (likely due to a network issue). Check your settings and try again.")
                 return
             }
@@ -101,14 +100,12 @@ class ParseClient : NSObject {
         let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
             
             func sendError(_ error: String) {
-                print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
                 completionHandlerForPOST(nil, NSError(domain: "taskForPOSTMethod", code: 1, userInfo: userInfo))
             }
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                print(error!)
                 sendError("The request failed (likely due to a network issue). Check your settings and try again.")
                 return
             }

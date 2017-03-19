@@ -15,7 +15,7 @@ class UdacityClient : NSObject {
     // MARK: Properties
     
     // shared session
-    var session : URLSession
+    var session = URLSession.shared
     
     // authentication state
     var sessionID: String? = nil
@@ -25,14 +25,15 @@ class UdacityClient : NSObject {
     // MARK: Initializers
     
     override init() {
+        
+        super.init()
+        
         session = {
             let configuration = URLSessionConfiguration.default
             configuration.timeoutIntervalForRequest = 5
             configuration.timeoutIntervalForResource = 5
             return URLSession(configuration: configuration, delegate: nil, delegateQueue: nil)
         }()
-        
-        super.init()
     }
     
     // MARK: GET
@@ -46,14 +47,12 @@ class UdacityClient : NSObject {
         let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
             
             func sendError(_ error: String) {
-                print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
                 completionHandlerForGET(nil, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
             }
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                print(error!)
                 sendError("The request failed (likely due to a network issue). Check your settings and try again.")
                 return
             }
@@ -105,14 +104,12 @@ class UdacityClient : NSObject {
         let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
             
             func sendError(_ error: String) {
-                print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
                 completionHandlerForPOST(nil, NSError(domain: "taskForPOSTMethod", code: 1, userInfo: userInfo))
             }
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                print(error!)
                 sendError("The request failed (likely due to a network issue). Check your settings and try again.")
                 return
             }
@@ -164,14 +161,12 @@ class UdacityClient : NSObject {
         let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
             
             func sendError(_ error: String) {
-                print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
                 completionHandlerForDELETE(nil, NSError(domain: "taskForDELETEMethod", code: 1, userInfo: userInfo))
             }
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                print(error!)
                 sendError("The request failed (likely due to a network issue). Check your settings and try again.")
                 return
             }

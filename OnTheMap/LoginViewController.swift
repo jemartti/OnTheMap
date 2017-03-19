@@ -22,7 +22,6 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var usernameTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginButton: BorderedButton!
-    @IBOutlet weak var signUpTextLabel: UILabel!
     @IBOutlet weak var debugTextLabel: UILabel!
     
     // MARK: Life Cycle
@@ -36,14 +35,6 @@ class LoginViewController: UIViewController {
         subscribeToNotification(.UIKeyboardWillHide, selector: #selector(keyboardWillHide))
         subscribeToNotification(.UIKeyboardDidShow, selector: #selector(keyboardDidShow))
         subscribeToNotification(.UIKeyboardDidHide, selector: #selector(keyboardDidHide))
-    }
-    
-    // TODO: Remove this
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        self.usernameTextField.text = "jacob@marttinen.ca"
-        self.passwordTextField.text = "g@wUEI6+G6bW8lCpqNq!gMBOG"
     }
     
     override func viewWillDisappear(_ animated: Bool) {

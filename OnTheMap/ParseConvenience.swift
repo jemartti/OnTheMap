@@ -61,19 +61,18 @@ extension ParseClient {
         completionHandlerForPostSession: @escaping (_ error: NSError?) -> Void
     ) {
         
-//        /* Specify HTTP body */
-//        let jsonBody = "{\"\(ParseClient.JSONResponseKeys.UniqueKey)\": \"\(UdacityClient.sharedInstance().user!.key)\", \"\(ParseClient.JSONResponseKeys.FirstName)\": \"\(UdacityClient.sharedInstance().user!.firstName)\", \"\(ParseClient.JSONResponseKeys.LastName)\": \"\(UdacityClient.sharedInstance().user!.lastName)\",\"\(ParseClient.JSONResponseKeys.MapString)\": \"\(mapString)\", \"\(ParseClient.JSONResponseKeys.MediaURL)\": \"\(mediaURL)\",\"\(ParseClient.JSONResponseKeys.Latitude)\": \(coordinates.latitude), \"\(ParseClient.JSONResponseKeys.Longitude)\": \(coordinates.longitude)}"
-//        
-//        /* Make the request */
-//        let _ = taskForPOSTMethod(Methods.StudentLocation, parameters: [:], jsonBody: jsonBody) { (results, error) in
-//            if let error = error {
-//                completionHandlerForPostSession(error)
-//                return
-//            }
-//            
-//            completionHandlerForPostSession(nil)
-//        }
+        /* Specify HTTP body */
+        let jsonBody = "{\"\(ParseClient.JSONResponseKeys.UniqueKey)\": \"\(UdacityClient.sharedInstance().user!.key)\", \"\(ParseClient.JSONResponseKeys.FirstName)\": \"\(UdacityClient.sharedInstance().user!.firstName)\", \"\(ParseClient.JSONResponseKeys.LastName)\": \"\(UdacityClient.sharedInstance().user!.lastName)\",\"\(ParseClient.JSONResponseKeys.MapString)\": \"\(mapString)\", \"\(ParseClient.JSONResponseKeys.MediaURL)\": \"\(mediaURL)\",\"\(ParseClient.JSONResponseKeys.Latitude)\": \(coordinates.latitude), \"\(ParseClient.JSONResponseKeys.Longitude)\": \(coordinates.longitude)}"
         
-        completionHandlerForPostSession(NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: [NSLocalizedDescriptionKey : "FAIL FAIL FAIL"]))
+        /* Make the request */
+        let _ = taskForPOSTMethod(Methods.StudentLocation, parameters: [:], jsonBody: jsonBody) { (results, error) in
+            
+            if let error = error {
+                completionHandlerForPostSession(error)
+                return
+            }
+            
+            completionHandlerForPostSession(nil)
+        }
     }
 }

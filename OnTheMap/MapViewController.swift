@@ -16,6 +16,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         // Set up the Navigation bar
@@ -39,14 +40,12 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             )
         ]
         navigationItem.title = "On the Map"
-        
-        updateStudentInformation()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
-        self.updateAnnotations()
+        self.updateStudentInformation()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -95,6 +94,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
 
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        
         if control == view.rightCalloutAccessoryView {
             if let mediaURL = view.annotation?.subtitle!,
                 let toOpen = URL(string: mediaURL) {
@@ -110,10 +110,11 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     // MARK: Supplementary Functions
     
     func updateStudentInformation() {
+        
         // Load the studentInformations
         ParseClient.sharedInstance().getStudentLocations(100, skip: 0, order: "-updatedAt") { (error) in
-            if let error = error {
-                self.alertUserOfFailure(message: error.localizedDescription)
+            if error != nil {
+                self.alertUserOfFailure(message: "Data download failed.")
             } else {
                 performUIUpdatesOnMain {
                     self.updateAnnotations()
@@ -124,6 +125,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     // Update the pins on the map
     private func updateAnnotations() {
+        
         var annotations = [MKPointAnnotation]()
         
         for studentInformation in ParseClient.sharedInstance().studentInformations {
@@ -161,6 +163,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     func logout() {
+        
         UdacityClient.sharedInstance().deleteSession() { (error) in
             if let error = error {
                 self.alertUserOfFailure(message: error.localizedDescription)

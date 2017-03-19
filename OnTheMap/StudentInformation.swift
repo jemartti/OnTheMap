@@ -23,6 +23,7 @@ struct StudentInformation {
     
     // construct a StudentInformation from a dictionary
     init(dictionary: [String:AnyObject]) {
+        
         objectId = dictionary[ParseClient.JSONResponseKeys.ObjectID] as! String
         uniqueKey = dictionary[ParseClient.JSONResponseKeys.UniqueKey] as? String
         firstName = dictionary[ParseClient.JSONResponseKeys.FirstName] as? String
@@ -33,6 +34,7 @@ struct StudentInformation {
         longitude = dictionary[ParseClient.JSONResponseKeys.Longitude] as? Float
     }
     
+    // Convert results to an array of StudentInformations
     static func studentInformationsFromResults(_ results: [[String:AnyObject]]) -> [StudentInformation] {
         
         var studentInformations = [StudentInformation]()

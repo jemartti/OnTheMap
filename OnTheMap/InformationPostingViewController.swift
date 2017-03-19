@@ -32,6 +32,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
     // MARK: Life Cycle
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         initializeUI()
@@ -42,8 +43,9 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        setUIForFind()
         super.viewWillAppear(animated)
+        
+        setUIForFind()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -59,33 +61,42 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
     }
     
     @IBAction func find(_ sender: Any) {
+        
         if answerTextField.text == "" {
+            self.alertUserOfFailure(message: "Location string is required.", exit: false)
             return	
         }
         
+        // Set up the spinner
         let indicator: UIActivityIndicatorView = createIndicator()
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         indicator.startAnimating()
         
+        // Geocode the string
         CLGeocoder().geocodeAddressString(answerTextField.text!, completionHandler: {(placemarks, error) -> Void in
-            if let error = error {
-                //self.alertUserOfFailure(message: error.localizedDescription)
-                print (error)
+            if error != nil {
+                performUIUpdatesOnMain {
+                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                    indicator.stopAnimating()
+                }
+                self.alertUserOfFailure(message: "We could not find that address. Try again.", exit: false)
                 return
             }
             if let placemark = placemarks?.first {
                 performUIUpdatesOnMain {
-                    print (placemark)
                     UIApplication.shared.isNetworkActivityIndicatorVisible = false
                     indicator.stopAnimating()
                     
+                    // Set the post data fields
                     self.mapString = self.answerTextField.text!
                     self.location = placemark.location!.coordinate
                     
+                    // Update the map
                     let region = MKCoordinateRegionMakeWithDistance(placemark.location!.coordinate, 10000.0, 10000.0)
                     self.mapView.setRegion(region, animated: true)
                     self.mapView.addAnnotation(MKPlacemark(placemark: placemark))
                     
+                    // Update the UI
                     self.setUIForConfirm()
                 }
             }
@@ -95,7 +106,7 @@ class InformationPostingViewController: UIViewController, MKMapViewDelegate {
     @IBAction func submit(_ sender: Any) {
         ParseClient.sharedInstance().postStudentLocation(mapString!, mediaURL: answerTextField.text!, coordinates: location!) { (error) in
             if error != nil {
-                self.alertUserOfFailure(message: "Post failed. Try again.")
+                self.alertUserOfFailure(message: "Post failed. Try again.", exit: true)
             } else {
                 performUIUpdatesOnMain {
                     self.returnToRoot()
@@ -171,6 +182,7 @@ private extension InformationPostingViewController {
     }
     
     func createIndicator() -> UIActivityIndicatorView {
+        
         let indicator = UIActivityIndicatorView(
             activityIndicatorStyle: UIActivityIndicatorViewStyle.gray
         )
@@ -182,6 +194,7 @@ private extension InformationPostingViewController {
     }
     
     func setUIForFind() {
+        
         questionLabel.text = "Where are you studying today?"
         
         answerTextField.text = ""
@@ -195,7 +208,8 @@ private extension InformationPostingViewController {
     }
     
     func setUIForConfirm() {
-        questionLabel.text = "Specify a related link."
+        
+        questionLabel.text = "What is your URL?"
         
         answerTextField.text = ""
         answerTextField.placeholder = "http://udacity.com"
@@ -208,6 +222,7 @@ private extension InformationPostingViewController {
     }
     
     func configureTextField(_ textField: UITextField) {
+        
         let textFieldPaddingViewFrame = CGRect(x: 0.0, y: 0.0, width: 13.0, height: 0.0)
         let textFieldPaddingView = UIView(frame: textFieldPaddingViewFrame)
         textField.text = ""
@@ -218,7 +233,7 @@ private extension InformationPostingViewController {
         textField.delegate = self
     }
     
-    func alertUserOfFailure(message: String) {
+    func alertUserOfFailure(message: String, exit: Bool) {
         
         performUIUpdatesOnMain {
             let alertController = UIAlertController(
@@ -232,14 +247,18 @@ private extension InformationPostingViewController {
                 handler: nil
             ))
             
-            self.returnToRoot()
-            
-            // Present the failure alert on the root
-            UIApplication.shared.keyWindow?.rootViewController?.presentedViewController?.present(
-                alertController,
-                animated: true,
-                completion: nil
-            )
+            if exit {
+                self.returnToRoot()
+                
+                // Present the failure alert on the root VC
+                UIApplication.shared.keyWindow?.rootViewController?.presentedViewController?.present(
+                    alertController,
+                    animated: true,
+                    completion: nil
+                )
+            } else {
+                self.present(alertController, animated: true, completion: nil)
+            }
         }
     }
 }

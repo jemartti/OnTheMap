@@ -12,6 +12,7 @@ class ClientHelpers {
     
     // substitute the key for the value that is contained within the method name
     static func substituteKeyInMethod(_ method: String, key: String, value: String) -> String? {
+        
         if method.range(of: "{\(key)}") != nil {
             return method.replacingOccurrences(of: "{\(key)}", with: value)
         } else {

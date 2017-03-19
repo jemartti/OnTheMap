@@ -45,7 +45,7 @@ class ListViewController: UITableViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
         
-        self.tableView.reloadData()
+        self.updateStudentInformation()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -90,7 +90,7 @@ class ListViewController: UITableViewController {
         )!
         let studentInformation = ParseClient.sharedInstance().studentInformations[(indexPath as NSIndexPath).row]
         
-        // Set the name and image
+        // Set the name
         cell.textLabel?.text = ""
         if let firstName = studentInformation.firstName {
             cell.textLabel?.text = firstName + " "
@@ -99,6 +99,7 @@ class ListViewController: UITableViewController {
             cell.textLabel?.text = (cell.textLabel?.text)! + lastName
         }
         
+        // Set the image
         cell.imageView?.image = UIImage(named: "icon_pin")
         
         return cell
@@ -108,6 +109,7 @@ class ListViewController: UITableViewController {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
+        // Set the link action
         let studentInformation = ParseClient.sharedInstance().studentInformations[(indexPath as NSIndexPath).row]
         if let mediaURL = studentInformation.mediaURL,
             let toOpen = URL(string: mediaURL) {
