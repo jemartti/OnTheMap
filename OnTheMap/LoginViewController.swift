@@ -22,30 +22,41 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var usernameTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginButton: BorderedButton!
+    @IBOutlet weak var signUpTextLabel: UILabel!
     @IBOutlet weak var debugTextLabel: UILabel!
-    
     
     // MARK: Life Cycle
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         configureUI()
-        
         subscribeToNotification(.UIKeyboardWillShow, selector: #selector(keyboardWillShow))
         subscribeToNotification(.UIKeyboardWillHide, selector: #selector(keyboardWillHide))
         subscribeToNotification(.UIKeyboardDidShow, selector: #selector(keyboardDidShow))
         subscribeToNotification(.UIKeyboardDidHide, selector: #selector(keyboardDidHide))
     }
     
+    // TODO: Remove this
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.usernameTextField.text = "jacob@marttinen.ca"
+        self.passwordTextField.text = "g@wUEI6+G6bW8lCpqNq!gMBOG"
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        self.debugTextLabel.text = ""
         unsubscribeFromAllNotifications()
     }
     
     // MARK: Login
     
     @IBAction func loginPressed(_ sender: AnyObject) {
+        
         userTappedView(self)
         
         if usernameTextField.text!.isEmpty || passwordTextField.text!.isEmpty {
@@ -57,7 +68,10 @@ class LoginViewController: UIViewController {
     }
     
     private func completeLogin() {
+        
         performUIUpdatesOnMain {
+            self.usernameTextField.text = ""
+            self.passwordTextField.text = ""
             self.debugTextLabel.text = ""
             self.setUIEnabled(true)
             
@@ -67,12 +81,20 @@ class LoginViewController: UIViewController {
     }
     
     private func alertUserOfFailure( message: String) {
+        
         performUIUpdatesOnMain {
-            let alertController = UIAlertController(title: "Login Failed", message:
-                message, preferredStyle: UIAlertControllerStyle.alert)
-            alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.default,handler: nil))
-            
+            let alertController = UIAlertController(
+                title: "Login Failed",
+                message: message,
+                preferredStyle: UIAlertControllerStyle.alert
+            )
+            alertController.addAction(UIAlertAction(
+                title: "Dismiss",
+                style: UIAlertActionStyle.default,
+                handler: nil
+            ))
             self.present(alertController, animated: true, completion: nil)
+            
             self.setUIEnabled(true)
         }
     }
@@ -93,21 +115,6 @@ class LoginViewController: UIViewController {
     private func getUserData() {
         
         UdacityClient.sharedInstance().getUserData() { (error) in
-            if let error = error {
-                self.alertUserOfFailure(message: error.localizedDescription)
-            } else {
-                if let error = error {
-                    self.alertUserOfFailure(message: error.localizedDescription)
-                } else {
-                    self.completeLogin()
-                }
-            }
-        }
-    }
-    
-    private func deleteSession() {
-        
-        UdacityClient.sharedInstance().deleteSession() { (error) in
             if let error = error {
                 self.alertUserOfFailure(message: error.localizedDescription)
             } else {
@@ -211,10 +218,8 @@ private extension LoginViewController {
         let textFieldPaddingView = UIView(frame: textFieldPaddingViewFrame)
         textField.leftView = textFieldPaddingView
         textField.leftViewMode = .always
-        textField.backgroundColor = Constants.UI.OrangeColor
-        textField.textColor = UIColor.white
-        textField.attributedPlaceholder = NSAttributedString(string: textField.placeholder!, attributes: [NSForegroundColorAttributeName: UIColor.white])
-        textField.tintColor = Constants.UI.OrangeColor
+        textField.textColor = Constants.UI.OrangeColor
+        textField.attributedPlaceholder = NSAttributedString(string: textField.placeholder!, attributes: [NSForegroundColorAttributeName: Constants.UI.OrangeColor])
         textField.delegate = self
     }
 }

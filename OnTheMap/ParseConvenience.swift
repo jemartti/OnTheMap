@@ -15,7 +15,12 @@ extension ParseClient {
     
     // MARK: GET Convenience Methods
     
-    func getStudentLocations(_ limit: Int, skip: Int, order: String, completionHandlerForGetStudentLocations: @escaping (_ result: [StudentInformation]?, _ error: NSError?) -> Void) {
+    func getStudentLocations(
+        _ limit: Int,
+        skip: Int,
+        order: String,
+        completionHandlerForGetStudentLocations: @escaping (_ error: NSError?) -> Void
+    ) {
         
         /* Specify parameters */
         let parameters = [
@@ -29,43 +34,18 @@ extension ParseClient {
             
             /* Send the desired value(s) to completion handler */
             if let error = error {
-                completionHandlerForGetStudentLocations(nil, error)
-            } else {
-                
-                if let results = results?[ParseClient.JSONResponseKeys.Results] as? [[String:AnyObject]] {
-                    
-                    let studentInformations = StudentInformation.studentInformationsFromResults(results)
-                    completionHandlerForGetStudentLocations(studentInformations, nil)
-                } else {
-                    completionHandlerForGetStudentLocations(nil, NSError(domain: "getStudentLocations parsing", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not parse getStudentLocations"]))
-                }
-            }
-        }
-    }
-    
-    func getStudentLocations2(_ limit: Int, skip: Int, order: String, completionHandlerForGetStudentLocations: @escaping (_ error: NSError?) -> Void) {
-        
-        /* Specify parameters */
-        let parameters = [
-            ParseClient.ParameterKeys.Limit: limit,
-            ParseClient.ParameterKeys.Skip: skip,
-            ParseClient.ParameterKeys.Order: order
-            ] as [String : Any]
-        
-        /* Make the request */
-        let _ = taskForGETMethod(Methods.StudentLocation, parameters: parameters as [String:AnyObject]) { (results, error) in
-            
-            /* Send the desired value(s) to completion handler */
-            if let error = error {
                 completionHandlerForGetStudentLocations(error)
             } else {
     
                 if let results = results?[ParseClient.JSONResponseKeys.Results] as? [[String:AnyObject]] {
-                    
                     ParseClient.sharedInstance().studentInformations = StudentInformation.studentInformationsFromResults(results)
                     completionHandlerForGetStudentLocations(nil)
                 } else {
-                    completionHandlerForGetStudentLocations(NSError(domain: "getStudentLocations parsing", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not parse getStudentLocations"]))
+                    completionHandlerForGetStudentLocations(NSError(
+                        domain: "getStudentLocations parsing",
+                        code: 0,
+                        userInfo: [NSLocalizedDescriptionKey: "Could not parse getStudentLocations"]
+                    ))
                 }
             }
         }

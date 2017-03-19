@@ -12,20 +12,32 @@ import UIKit
 
 class ListViewController: UITableViewController {
     
-    // MARK: Properties
-    
-    
     // MARK: Life Cycle
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         // Set up the Navigation bar
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: UIBarButtonSystemItem.add,
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "Logout",
+            style: UIBarButtonItemStyle.plain,
             target: self,
-            action: #selector(ListViewController.create)
+            action: #selector(ListViewController.logout)
         )
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(
+                barButtonSystemItem: UIBarButtonSystemItem.refresh,
+                target: self,
+                action: #selector(ListViewController.updateStudentInformation)
+            ),
+            UIBarButtonItem(
+                image: UIImage(named: "icon_pin"),
+                style: UIBarButtonItemStyle.plain,
+                target: self,
+                action: #selector(ListViewController.create)
+            )
+        ]
         navigationItem.title = "On the Map"
     }
     
@@ -33,16 +45,7 @@ class ListViewController: UITableViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
         
-        // Load the studentInformations
-        ParseClient.sharedInstance().getStudentLocations2(100, skip: 0, order: "-updatedAt") { (error) in
-            if let error = error {
-                self.alertUserOfFailure(message: error.localizedDescription)
-            } else {
-                performUIUpdatesOnMain {
-                    self.tableView.reloadData()
-                }
-            }
-        }
+        self.tableView.reloadData()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -52,39 +55,48 @@ class ListViewController: UITableViewController {
     }
     
     private func alertUserOfFailure( message: String) {
+        
         performUIUpdatesOnMain {
-            let alertController = UIAlertController(title: "Login Failed", message:
-                message, preferredStyle: UIAlertControllerStyle.alert)
-            alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.default,handler: nil))
+            let alertController = UIAlertController(
+                title: "Action Failed",
+                message: message,
+                preferredStyle: UIAlertControllerStyle.alert
+            )
+            alertController.addAction(UIAlertAction(
+                title: "Dismiss",
+                style: UIAlertActionStyle.default,
+                handler: nil
+            ))
             
             self.present(alertController, animated: true, completion: nil)
         }
     }
-    
     
     // MARK: Table View Data Source
     
     override func tableView(
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
-        ) -> Int {
+    ) -> Int {
         return ParseClient.sharedInstance().studentInformations.count
     }
     
     override func tableView(
         _ tableView: UITableView,
         cellForRowAt indexPath: IndexPath
-        ) -> UITableViewCell {
+    ) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: "StudentInformationTableViewCell"
-            )!
+        )!
         let studentInformation = ParseClient.sharedInstance().studentInformations[(indexPath as NSIndexPath).row]
         
         // Set the name and image
-        if let firstName = studentInformation.firstName, let lastName = studentInformation.lastName {
-            cell.textLabel?.text = firstName + " " + lastName
-        } else {
-            cell.textLabel?.text = "FFDSUFSDF"
+        cell.textLabel?.text = ""
+        if let firstName = studentInformation.firstName {
+            cell.textLabel?.text = firstName + " "
+        }
+        if let lastName = studentInformation.lastName {
+            cell.textLabel?.text = (cell.textLabel?.text)! + lastName
         }
         
         cell.imageView?.image = UIImage(named: "icon_pin")
@@ -95,22 +107,56 @@ class ListViewController: UITableViewController {
     override func tableView(
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
-        ) {
-//        let detailController = storyboard!.instantiateViewController(
-//            withIdentifier: "MemeDetailViewController"
-//            ) as! MemeDetailViewController
-//        detailController.meme = memes[(indexPath as NSIndexPath).row]
-//        navigationController!.pushViewController(detailController, animated: true)
+    ) {
+        let studentInformation = ParseClient.sharedInstance().studentInformations[(indexPath as NSIndexPath).row]
+        if let mediaURL = studentInformation.mediaURL,
+            let toOpen = URL(string: mediaURL) {
+            UIApplication.shared.open(
+                toOpen,
+                options: [:],
+                completionHandler: nil
+            )
+        }
     }
-    
     
     // MARK: Supplementary Functions
     
+    func updateStudentInformation() {
+        // Load the studentInformations and reload the table
+        ParseClient.sharedInstance().getStudentLocations(100, skip: 0, order: "-updatedAt") { (error) in
+            if error != nil {
+                self.alertUserOfFailure(message: "Data download failed.")
+            } else {
+                performUIUpdatesOnMain {
+                    self.tableView.reloadData()
+                }
+            }
+        }
+    }
+    
     // Displays the Create View
     func create() {
-//        let memeCreateVC = storyboard!.instantiateViewController(
-//            withIdentifier: "MemeCreateViewController"
-//        )
-//        present(memeCreateVC, animated: true, completion: nil)
+        //        let memeCreateVC = storyboard!.instantiateViewController(
+        //            withIdentifier: "MemeCreateViewController"
+        //        )
+        //        present(memeCreateVC, animated: true, completion: nil)
+    }
+    
+    func logout() {
+        UdacityClient.sharedInstance().deleteSession() { (error) in
+            if let error = error {
+                self.alertUserOfFailure(message: error.localizedDescription)
+            } else {
+                if let error = error {
+                    self.alertUserOfFailure(message: error.localizedDescription)
+                } else {
+                    self.returnToRoot()
+                }
+            }
+        }
+    }
+    
+    func returnToRoot() {
+        dismiss(animated: true, completion: nil)
     }
 }

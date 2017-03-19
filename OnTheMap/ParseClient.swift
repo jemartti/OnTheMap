@@ -17,13 +17,20 @@ class ParseClient : NSObject {
     // shared session
     var session = URLSession.shared
     
-    // authentication state
+    // API state
     var studentInformations : [StudentInformation] = []
     
     // MARK: Initializers
     
     override init() {
         super.init()
+        
+        session = {
+            let configuration = URLSessionConfiguration.default
+            configuration.timeoutIntervalForRequest = 5
+            configuration.timeoutIntervalForResource = 5
+            return URLSession(configuration: configuration, delegate: nil, delegateQueue: nil)
+        }()
     }
     
     // MARK: GET
