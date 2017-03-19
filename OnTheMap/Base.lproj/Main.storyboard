@@ -214,7 +214,7 @@
                                         </constraints>
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                        <textInputTraits key="textInputTraits"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                                     </textField>
                                     <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="755" verticalCompressionResistancePriority="755" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="w7l-ZT-ZwY">
                                         <rect key="frame" x="0.0" y="200" width="375" height="407"/>
@@ -226,11 +226,17 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="187.5" height="40"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <state key="normal" title="Find on the Map"/>
+                                                <connections>
+                                                    <action selector="find:" destination="O6a-yB-F3d" eventType="primaryActionTriggered" id="JkO-xf-acw"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TBA-CM-uDc" customClass="BorderedButton" customModule="OnTheMap" customModuleProvider="target">
                                                 <rect key="frame" x="187.5" y="0.0" width="187.5" height="40"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <state key="normal" title="Submit"/>
+                                                <connections>
+                                                    <action selector="submit:" destination="O6a-yB-F3d" eventType="primaryActionTriggered" id="qYa-K4-bLQ"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>

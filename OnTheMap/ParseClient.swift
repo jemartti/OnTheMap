@@ -134,68 +134,7 @@ class ParseClient : NSObject {
             }
             
             /* Parse the data and use the data (happens in completion handler) */
-            let range = Range(uncheckedBounds: (5, data.count))
-            let newData = data.subdata(in: range)
-            ClientHelpers.convertDataWithCompletionHandler(newData, completionHandlerForConvertData: completionHandlerForPOST)
-        }
-        
-        /* Start the request */
-        task.resume()
-        
-        return task
-    }
-    
-    // MARK: PUT
-    
-    func taskForPUTMethod(_ method: String, parameters: [String:AnyObject], jsonBody: String, completionHandlerForPUT: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
-        
-        /* Build the URL, Configure the request */
-        let request = parseRequestFromParameters(parameters, method: method)
-        request.httpMethod = "PUT"
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonBody.data(using: String.Encoding.utf8)
-        
-        /* Make the request */
-        let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
-            
-            func sendError(_ error: String) {
-                print(error)
-                let userInfo = [NSLocalizedDescriptionKey : error]
-                completionHandlerForPUT(nil, NSError(domain: "taskForPUTMethod", code: 1, userInfo: userInfo))
-            }
-            
-            /* GUARD: Was there an error? */
-            guard (error == nil) else {
-                print(error!)
-                sendError("The request failed (likely due to a network issue). Check your settings and try again.")
-                return
-            }
-            
-            /* GUARD: Did we get a successful 2XX response? */
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode else {
-                sendError("The request failed due to a server error. Try again later.")
-                return
-            }
-            if statusCode < 200 || statusCode > 299 {
-                if statusCode == 403 {
-                    sendError("Invalid credentials.")
-                } else {
-                    sendError("The request failed due to a server error (\(statusCode)). Try again later.")
-                }
-                return
-            }
-            
-            /* GUARD: Was there any data returned? */
-            guard let data = data else {
-                sendError("The request failed due to a server error. Try again later.")
-                return
-            }
-            
-            /* Parse the data and use the data (happens in completion handler) */
-            let range = Range(uncheckedBounds: (5, data.count))
-            let newData = data.subdata(in: range)
-            ClientHelpers.convertDataWithCompletionHandler(newData, completionHandlerForConvertData: completionHandlerForPUT)
+            ClientHelpers.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPOST)
         }
         
         /* Start the request */

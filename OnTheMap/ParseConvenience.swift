@@ -8,6 +8,7 @@
 
 import UIKit
 import Foundation
+import CoreLocation
 
 // MARK: - ParseClient (Convenient Resource Methods)
 
@@ -53,27 +54,26 @@ extension ParseClient {
     
     // MARK: POST Convenience Methods
     
-//    func postToFavorites(_ studentInformation: StudentInformation, favorite: Bool, completionHandlerForFavorite: @escaping (_ result: Int?, _ error: NSError?) -> Void) {
+    func postStudentLocation(
+        _ mapString: String,
+        mediaURL: String,
+        coordinates: CLLocationCoordinate2D,
+        completionHandlerForPostSession: @escaping (_ error: NSError?) -> Void
+    ) {
+        
+//        /* Specify HTTP body */
+//        let jsonBody = "{\"\(ParseClient.JSONResponseKeys.UniqueKey)\": \"\(UdacityClient.sharedInstance().user!.key)\", \"\(ParseClient.JSONResponseKeys.FirstName)\": \"\(UdacityClient.sharedInstance().user!.firstName)\", \"\(ParseClient.JSONResponseKeys.LastName)\": \"\(UdacityClient.sharedInstance().user!.lastName)\",\"\(ParseClient.JSONResponseKeys.MapString)\": \"\(mapString)\", \"\(ParseClient.JSONResponseKeys.MediaURL)\": \"\(mediaURL)\",\"\(ParseClient.JSONResponseKeys.Latitude)\": \(coordinates.latitude), \"\(ParseClient.JSONResponseKeys.Longitude)\": \(coordinates.longitude)}"
 //        
-//        /* 1. Specify parameters, method (if has {key}), and HTTP body (if POST) */
-//        let parameters = [ParseClient.ParameterKeys.SessionID : ParseClient.sharedInstance().sessionID!]
-//        var mutableMethod: String = Methods.AccountIDFavorite
-//        mutableMethod = ClientHelpers.substituteKeyInMethod(mutableMethod, key: ParseClient.URLKeys.UserID, value: String(ParseClient.sharedInstance().userID!))!
-//        let jsonBody = "{\"\(ParseClient.JSONBodyKeys.MediaType)\": \"studentInformation\",\"\(ParseClient.JSONBodyKeys.MediaID)\": \"\(studentInformation.id)\",\"\(ParseClient.JSONBodyKeys.Favorite)\": \(favorite)}"
-//        
-//        /* 2. Make the request */
-//        let _ = taskForPOSTMethod(mutableMethod, parameters: parameters as [String:AnyObject], jsonBody: jsonBody) { (results, error) in
-//            
-//            /* 3. Send the desired value(s) to completion handler */
+//        /* Make the request */
+//        let _ = taskForPOSTMethod(Methods.StudentLocation, parameters: [:], jsonBody: jsonBody) { (results, error) in
 //            if let error = error {
-//                completionHandlerForFavorite(nil, error)
-//            } else {
-//                if let results = results?[ParseClient.JSONResponseKeys.StatusCode] as? Int {
-//                    completionHandlerForFavorite(results, nil)
-//                } else {
-//                    completionHandlerForFavorite(nil, NSError(domain: "postToFavoritesList parsing", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not parse postToFavoritesList"]))
-//                }
+//                completionHandlerForPostSession(error)
+//                return
 //            }
+//            
+//            completionHandlerForPostSession(nil)
 //        }
-//    }
+        
+        completionHandlerForPostSession(NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: [NSLocalizedDescriptionKey : "FAIL FAIL FAIL"]))
+    }
 }
