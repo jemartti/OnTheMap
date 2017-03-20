@@ -128,7 +128,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         
         var annotations = [MKPointAnnotation]()
         
-        for studentInformation in ParseClient.sharedInstance().studentInformations {
+        for studentInformation in StudentInformation.studentInformations {
             let annotation = MKPointAnnotation()
             
             if let firstName = studentInformation.firstName {

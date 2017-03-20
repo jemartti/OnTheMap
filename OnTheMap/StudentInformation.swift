@@ -8,6 +8,9 @@
 
 struct StudentInformation {
     
+    // Application State
+    static var studentInformations : [StudentInformation] = []
+    
     // MARK: Properties
     
     let objectId: String

@@ -39,7 +39,7 @@ extension ParseClient {
             } else {
     
                 if let results = results?[ParseClient.JSONResponseKeys.Results] as? [[String:AnyObject]] {
-                    ParseClient.sharedInstance().studentInformations = StudentInformation.studentInformationsFromResults(results)
+                    StudentInformation.studentInformations = StudentInformation.studentInformationsFromResults(results)
                     completionHandlerForGetStudentLocations(nil)
                 } else {
                     completionHandlerForGetStudentLocations(NSError(

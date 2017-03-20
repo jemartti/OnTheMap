@@ -78,7 +78,7 @@ class ListViewController: UITableViewController {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        return ParseClient.sharedInstance().studentInformations.count
+        return StudentInformation.studentInformations.count
     }
     
     override func tableView(
@@ -88,7 +88,7 @@ class ListViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(
             withIdentifier: "StudentInformationTableViewCell"
         )!
-        let studentInformation = ParseClient.sharedInstance().studentInformations[(indexPath as NSIndexPath).row]
+        let studentInformation = StudentInformation.studentInformations[(indexPath as NSIndexPath).row]
         
         // Set the name
         cell.textLabel?.text = ""
@@ -110,7 +110,7 @@ class ListViewController: UITableViewController {
         didSelectRowAt indexPath: IndexPath
     ) {
         // Set the link action
-        let studentInformation = ParseClient.sharedInstance().studentInformations[(indexPath as NSIndexPath).row]
+        let studentInformation = StudentInformation.studentInformations[(indexPath as NSIndexPath).row]
         if let mediaURL = studentInformation.mediaURL,
             let toOpen = URL(string: mediaURL) {
             UIApplication.shared.open(

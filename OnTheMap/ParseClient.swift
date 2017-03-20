@@ -17,9 +17,6 @@ class ParseClient : NSObject {
     // shared session
     var session = URLSession.shared
     
-    // UI State
-    var studentInformations : [StudentInformation] = []
-    
     // MARK: Initializers
     
     override init() {
